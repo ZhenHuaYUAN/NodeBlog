@@ -1,34 +1,39 @@
 const http = require('http')
 const queryString = require('querystring')
 
-// const server = http.createServer((req, res) => {
-//   console.log(req.method) //GET
-//   const url = req.url
-//   console.log('url:', url);
-//   req.query = queryString.parse(url.split('?')[1])
-//   console.log('query:',req.query)
-//   res.end(
-//     JSON.stringify(req.query)
-//   )
-// })
-
-// post 请求
 const server = http.createServer((req, res) => {
-  if (req.method === 'POST') {
-    // 数据格式
-    console.log('content-type:', req.headers['content-type'])
+  const method = req.method
+  const url = req.url
+  const path = url.split('?')[0]
+  const query = queryString.parse(url.split('?')[1])
+
+  // 设置返回格式为json
+  res.setHeader('Content-Type', 'application/json')
+
+  // 返回的数据
+  const resData = {
+    method,
+    url,
+    path,
+    query
+  }
+  // 返回
+  if (method === 'GET') {
+    // 返回的json格式的字符串
+    res.end(JSON.stringify(resData))
+  }
+  if (method === 'POST') {
     let postData = ''
-    // 通过流的方式读取数据。随时来了数据就会出发事件。chunk是二进制格式
     req.on('data', chunk => {
       postData += chunk.toString()
     })
-    // 接受完后出发end事件
     req.on('end', () => {
-      console.log(postData);
-      res.end('hello world')
+      resData.postData = postData
+      res.end(JSON.stringify(resData))
     })
   }
 })
 
 
 server.listen(8000)
+console.log('ok');
