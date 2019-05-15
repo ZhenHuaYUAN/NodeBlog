@@ -1,7 +1,7 @@
 const {
   exec
 } = require('../db/mysql.js')
-
+const xss = require('xss')
 const getList = (author, keyword) => {
   // 定义sql语句
   let sql = `select * from blogs where 1=1 `
@@ -25,7 +25,7 @@ const getDetail = (id) => {
 
 // 如果没有默认空对象。
 const newBlog = (blogData = {}) => {
-  const title = blogData.title
+  const title = xss(blogData.title)
   const content = blogData.content
   const author = blogData.author
   const createTime = Date.now()
@@ -51,16 +51,16 @@ const updateBlog = (id, blogData = {}) => {
     // 更新影响的行数
     if (updateData.affectedRows > 0) {
       return true
-    }else {
+    } else {
       return error
     }
   })
 }
 
-const deleteBlog = (id,author) => {
+const deleteBlog = (id, author) => {
   const sql = `delete from blogs where id = '${id}' and author = '${author}'`
-  return exec(sql).then(deleteData=>{
-    if(deleteData.affectedRows > 0) {
+  return exec(sql).then(deleteData => {
+    if (deleteData.affectedRows > 0) {
       return true
     } else {
       return false
