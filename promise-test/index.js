@@ -49,14 +49,42 @@ function getFileContent(fileName) {
   return promise
 }
 // promise的.then方法 .then返回的也是promise对象
-getFileContent('a.json').then(aData => {
-  console.log('a data', aData);
-  return getFileContent(aData.next)
-}).then(bData=>{
-  console.log('b data',bData);
-  return getFileContent(bData.next)
-}).then(cData=>{
-  console.log('c data',cData);
-})
+// getFileContent('a.json').then(aData => {
+//   console.log('a data', aData);
+//   return getFileContent(aData.next)
+// }).then(bData=>{
+//   console.log('b data',bData);
+//   return getFileContent(bData.next)
+// }).then(cData=>{
+//   console.log('c data',cData);
+// })
 
-// async await
+// async await 执行方法返回的是promise对象
+async function readFileData() {
+  try {
+    // await Promise 可以将promise中resolve的内容直接取出来
+    const aData = await getFileContent('a.json')
+    console.log('adata', aData);
+    const bData = await getFileContent(aData.next)
+    console.log('bdata', bData);
+    const cData = await getFileContent(bData.next)
+    console.log(cData);
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
+readFileData()
+
+// async function readAData() {
+//   const aData = await getFileContent('a.json')
+//   return aData
+// }
+
+// async function test() {
+//   const aData = await readAData()
+//   console.log(aData);
+// }
+
+// test()
